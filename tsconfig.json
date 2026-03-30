@@ -42,6 +42,6 @@
     "skipLibCheck": true,
     "allowImportingTsExtensions": true,
     "esModuleInterop": true,
-    "noEmit": true
+    "noEmit": false
   }
 }
