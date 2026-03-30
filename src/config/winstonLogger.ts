@@ -42,6 +42,16 @@ const myFormat = combine(
     ? json()
     : printf((info) => `${info.timestamp} ${info.level}: ${info.message}`),
 );
+const sentryTransports: InstanceType<typeof Sentry>[] = [];
+if (isProd && config.DSN) {
+  try {
+    sentryTransports.push(new Sentry(options));
+  } catch {
+    // eslint-disable-next-line no-console
+    console.error('Failed to initialize Sentry transport');
+  }
+}
+
 const myTransports = [
   new transports.Console(),
   ...(!process.env.VERCEL
@@ -68,7 +78,7 @@ const myTransports = [
         }),
       ]
     : []),
-  ...(isProd ? [new Sentry(options)] : []),
+  ...sentryTransports,
 ];
 
 export const logger = createLogger({

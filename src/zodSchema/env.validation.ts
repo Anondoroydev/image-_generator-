@@ -1,7 +1,7 @@
 import z from 'zod';
 
 export const envSchema = z.object({
-  PORT: z.coerce.number().min(1000),
+  PORT: z.coerce.number().min(1000).default(5000),
   APP_URL: z.string().optional(),
   NODE_ENV: z
     .union([z.literal('development'), z.literal('production')])
@@ -11,12 +11,12 @@ export const envSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string(),
   GOOGLE_REDIRECT_URL: z.string(),
   JWT_SECRET: z.string(),
-  DSN: z.string(),
+  DSN: z.string().optional(),
   CLOUDINARY_CLOUD_NAME: z.string(),
   CLOUDINARY_API_KEY: z.string(),
   CLOUDINARY_API_SECRET: z.string(),
   GOOGLE_GEMINI_API_KEY: z.string().optional(),
   HUGGINGFACE_API_KEY: z.string().optional(),
   HUGGINGFACE_IMAGE_MODEL: z.string().optional(),
-  HUGGINGFACE_VIDEO_MODEL: z.string().optional()
+  HUGGINGFACE_VIDEO_MODEL: z.string().optional(),
 });
