@@ -4,9 +4,9 @@ import {
   generateVideo,
   getProjectById,
   getProjects,
-} from '../controllers/project.controller.ts';
-import { authenticate } from '../middleware/auth.middleware.ts';
-import { upload } from '../middleware/uploadMiddleware.ts';
+} from '../controllers/project.controller.js';
+import { authenticate } from '../middleware/auth.middleware.js';
+import { upload } from '../middleware/uploadMiddleware.js';
 
 const router = e.Router();
 

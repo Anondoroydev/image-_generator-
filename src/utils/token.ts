@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { config } from '../config/index.ts';
+import { config } from '../config/index.js';
 import crypto from 'crypto';
 export const generateAccessToken = (userID: string) => {
   return jwt.sign({ userID }, config.JWT_SECRET, { expiresIn: '1d' });

@@ -4,7 +4,7 @@ import {
   generateVideoService,
   getProjectByIdService,
   getProjectsService,
-} from '../services/project.service.ts';
+} from '../services/project.service.js';
 
 export async function createProject(req: Request, res: Response) {
   try {

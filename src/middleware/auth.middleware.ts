@@ -1,8 +1,8 @@
 import type { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import type { AuthPayload } from '../../types/auth.js';
-import { config } from '../config/index.ts';
-import { logger } from '../config/winstonLogger.ts';
+import { config } from '../config/index.js';
+import { logger } from '../config/winstonLogger.js';
 
 export const authenticate = (
   req: Request,

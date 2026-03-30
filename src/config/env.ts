@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-console */
-import { envSchema } from '../zodSchema/env.validation.ts';
+import { envSchema } from '../zodSchema/env.validation.js';
 
 const envParser = envSchema.safeParse(process.env);
 if (envParser.error) {

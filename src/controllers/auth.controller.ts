@@ -4,11 +4,11 @@ import {
   loginCallbackService,
   loginService,
   logoutService,
-} from '../services/auth.service.ts';
+} from '../services/auth.service.js';
 import {
   clearRefreshTokenCookie,
   setRefreshTokenCookie,
-} from '../utils/cookies.ts';
+} from '../utils/cookies.js';
 
 async function loginController(req: Request, res: Response) {
   const url = await loginService();

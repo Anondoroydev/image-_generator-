@@ -1,6 +1,6 @@
-import { prisma } from '../lib/prisma.ts';
-import { createSession } from '../services/auth.service.ts';
-import { hashToken } from './token.ts';
+import { prisma } from '../lib/prisma.js';
+import { createSession } from '../services/auth.service.js';
+import { hashToken } from './token.js';
 
 export const rotateRefreshToken = async (token: string) => {
   const hashed = hashToken(token);

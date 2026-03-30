@@ -4,9 +4,9 @@ import e, { type NextFunction, type Request, type Response } from 'express';
 import helmet from 'helmet';
 import type { HttpError } from 'http-errors';
 import createHttpError from 'http-errors';
-import { logger } from './config/winstonLogger.ts';
-import { authRouter } from './routes/auth.route.ts';
-import { projectRouter } from './routes/project.route.ts';
+import { logger } from './config/winstonLogger.js';
+import { authRouter } from './routes/auth.route.js';
+import { projectRouter } from './routes/project.route.js';
 
 const app = e();
 

@@ -2,9 +2,9 @@
 import type { Request } from 'express';
 import { unlink } from 'node:fs/promises';
 import { inspect } from 'node:util';
-import { logger } from '../config/winstonLogger.ts';
-import { prisma } from '../lib/prisma.ts';
-import { generateImageWithAI, generateVideoWithAi } from './ai.service.ts';
+import { logger } from '../config/winstonLogger.js';
+import { prisma } from '../lib/prisma.js';
+import { generateImageWithAI, generateVideoWithAi } from './ai.service.js';
 
 type CreateProjectBody = {
   projectName: string;

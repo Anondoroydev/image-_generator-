@@ -1,4 +1,4 @@
-import { prisma } from './src/lib/prisma.ts';
+import { prisma } from './src/lib/prisma.js';
 
 async function main() {
   const project = await prisma.project.findFirst({

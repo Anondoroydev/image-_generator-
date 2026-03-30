@@ -1,11 +1,11 @@
 import { google } from 'googleapis';
-import { config } from '../config/index.ts';
-import { prisma } from '../lib/prisma.ts';
+import { config } from '../config/index.js';
+import { prisma } from '../lib/prisma.js';
 import {
   generateAccessToken,
   generateRefreshToken,
   hashToken,
-} from '../utils/token.ts';
+} from '../utils/token.js';
 
 // Initialize Google OAuth client
 const oauth2Client = new google.auth.OAuth2(

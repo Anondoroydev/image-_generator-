@@ -2,11 +2,11 @@
 import { mkdirSync } from 'node:fs';
 import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import { ai } from '../config/ai.ts';
-import { cloudinary } from '../config/cloudinary.ts';
-import { config } from '../config/index.ts';
-import { logger } from '../config/winstonLogger.ts';
-import convertImageToBase64 from '../utils/convertImageToBase64.ts';
+import { ai } from '../config/ai.js';
+import { cloudinary } from '../config/cloudinary.js';
+import { config } from '../config/index.js';
+import { logger } from '../config/winstonLogger.js';
+import convertImageToBase64 from '../utils/convertImageToBase64.js';
 import axios from 'axios';
 import { inspect } from 'node:util';
 import type { Project } from '@prisma/client';
