@@ -21,6 +21,8 @@ try {
   process.exit(1);
 }
 
-app.listen(config.PORT, () => {
-  logger.info(`server is running on ${config.APP_URL}`);
-});
+if (!process.env.VERCEL) {
+  app.listen(config.PORT, () => {
+    logger.info(`server is running on ${config.APP_URL}`);
+  });
+}
