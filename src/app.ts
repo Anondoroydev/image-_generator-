@@ -20,6 +20,30 @@ app.use(cookie());
 app.use(e.json({ limit: '50mb' }));
 app.use(e.urlencoded({ limit: '50mb', extended: true }));
 
+app.get('/', (req, res) => {
+  res.json({ message: 'AI Shorts API is running. Visit /health for status.' });
+});
+
+app.get('/health', async (req, res) => {
+  const { envError } = await import('./config/env.ts');
+  const { prisma } = await import('./lib/prisma.ts');
+  
+  let dbStatus = 'testing...';
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    dbStatus = 'connected';
+  } catch (err: any) {
+    dbStatus = `failed: ${err.message}`;
+  }
+
+  res.json({
+    status: 'ok',
+    env: envError ? { status: 'invalid', errors: envError.format() } : { status: 'valid' },
+    database: dbStatus,
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.use('/api/v1', authRouter);
 app.use('/api/v1', projectRouter);
 
