@@ -8,7 +8,7 @@ import { logger } from '../config/winstonLogger.ts';
 import convertImageToBase64 from '../utils/convertImageToBase64.ts';
 import axios from 'axios';
 import { inspect } from 'node:util';
-import type { Project } from '../../generated/prisma/client.ts';
+import type { Project } from '@prisma/client';
 import https from 'node:https';
 import dns from 'node:dns';
 
