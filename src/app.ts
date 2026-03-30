@@ -3,8 +3,6 @@ import cors from 'cors';
 import e, { type NextFunction, type Request, type Response } from 'express';
 import helmet from 'helmet';
 import type { HttpError } from 'http-errors';
-import { authRouter } from './routes/auth.route.js';
-import { projectRouter } from './routes/project.route.js';
 
 const app = e();
 
@@ -55,8 +53,24 @@ app.get('/health', async (req, res) => {
   });
 });
 
-app.use('/api/v1', authRouter);
-app.use('/api/v1', projectRouter);
+// Use dynamic imports for routes to prevent heavy module tree from loading at init time
+// (prisma, googleapis, winstonLogger, etc. are all in the static import chain)
+app.use('/api/v1', async (req, res, next) => {
+  try {
+    const { authRouter } = await import('./routes/auth.route.js');
+    authRouter(req, res, next);
+  } catch (err) {
+    next(err);
+  }
+});
+app.use('/api/v1', async (req, res, next) => {
+  try {
+    const { projectRouter } = await import('./routes/project.route.js');
+    projectRouter(req, res, next);
+  } catch (err) {
+    next(err);
+  }
+});
 
 app.use(function (
   err: HttpError,
