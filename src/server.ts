@@ -2,11 +2,11 @@ import * as dotenv from 'dotenv';
 
 dotenv.config({ override: true });
 
-const { app } = await import('./app.ts');
-const { config } = await import('./config/index.ts');
-const { logger } = await import('./config/winstonLogger.ts');
-const { prisma } = await import('./lib/prisma.ts');
-await import('./config/cloudinary.ts');
+const { app } = await import('./app.js');
+const { config } = await import('./config/index.js');
+const { logger } = await import('./config/winstonLogger.js');
+const { prisma } = await import('./lib/prisma.js');
+await import('./config/cloudinary.js');
 
 try {
   await prisma.$connect();

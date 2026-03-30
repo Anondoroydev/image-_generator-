@@ -84,7 +84,7 @@ export async function createProjectService(req: Request) {
   let modelUrl = typeof modelImage === 'string' ? modelImage : '';
 
   try {
-    const { cloudinary } = await import('../config/cloudinary.ts');
+    const { cloudinary } = await import('../config/cloudinary.js');
     
     if (typeof productImage !== 'string') {
       const pUpload = await cloudinary.uploader.upload(productImage.path, {

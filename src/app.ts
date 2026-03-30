@@ -25,8 +25,8 @@ app.get('/', (req, res) => {
 });
 
 app.get('/health', async (req, res) => {
-  const { envError } = await import('./config/env.ts');
-  const { prisma } = await import('./lib/prisma.ts');
+  const { envError } = await import('./config/env.js');
+  const { prisma } = await import('./lib/prisma.js');
   
   let dbStatus = 'testing...';
   try {
