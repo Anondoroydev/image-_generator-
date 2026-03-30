@@ -1,8 +1,3 @@
-import dns from 'node:dns';
-
-// Force all network requests to prioritize IPv4
-dns.setDefaultResultOrder('ipv4first');
-
 import * as dotenv from 'dotenv';
 
 dotenv.config({ override: true });
@@ -18,7 +13,6 @@ try {
   logger.info('Prisma connected successfully');
 } catch (error) {
   logger.error('Prisma connection failed', error);
-  process.exit(1);
 }
 
 if (!process.env.VERCEL) {

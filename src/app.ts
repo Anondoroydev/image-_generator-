@@ -4,13 +4,9 @@ import e, { type NextFunction, type Request, type Response } from 'express';
 import helmet from 'helmet';
 import type { HttpError } from 'http-errors';
 import createHttpError from 'http-errors';
-import dns from 'node:dns';
 import { logger } from './config/winstonLogger.ts';
 import { authRouter } from './routes/auth.route.ts';
 import { projectRouter } from './routes/project.route.ts';
-
-// Force IPv4 priority for all network requests to avoid broken NAT64/IPv6 timeouts
-dns.setDefaultResultOrder('ipv4first');
 
 const app = e();
 

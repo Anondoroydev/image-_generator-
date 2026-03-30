@@ -44,11 +44,15 @@ const myFormat = combine(
 );
 const myTransports = [
   new transports.Console(),
-  new transports.File({
-    filename: './logs/development.log',
-    level: 'debug',
-  }),
-  ...(isProd
+  ...(!process.env.VERCEL
+    ? [
+        new transports.File({
+          filename: './logs/development.log',
+          level: 'debug',
+        }),
+      ]
+    : []),
+  ...(isProd && !process.env.VERCEL
     ? [
         new transports.File({
           filename: './logs/error.log',
@@ -62,9 +66,9 @@ const myTransports = [
           filename: './logs/info.log',
           level: 'info',
         }),
-        new Sentry(options),
       ]
     : []),
+  ...(isProd ? [new Sentry(options)] : []),
 ];
 
 export const logger = createLogger({
