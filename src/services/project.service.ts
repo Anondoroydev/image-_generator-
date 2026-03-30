@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Request } from 'express';
 import { unlink } from 'node:fs/promises';
 import { inspect } from 'node:util';
@@ -78,11 +79,41 @@ export async function createProjectService(req: Request) {
     throw new Error('Both productImage and modelImage are required. We checked files, fields, and common body patterns.');
   }
 
-  // 3. AI Generation
+  // 3. Upload to Cloudinary if they are local files
+  let productUrl = typeof productImage === 'string' ? productImage : '';
+  let modelUrl = typeof modelImage === 'string' ? modelImage : '';
+
+  try {
+    const { cloudinary } = await import('../config/cloudinary.ts');
+    
+    if (typeof productImage !== 'string') {
+      const pUpload = await cloudinary.uploader.upload(productImage.path, {
+        folder: 'ai-shorts',
+        resource_type: 'image',
+      });
+      if (pUpload) productUrl = pUpload.secure_url;
+    }
+    
+    if (typeof modelImage !== 'string') {
+      const mUpload = await cloudinary.uploader.upload(modelImage.path, {
+        folder: 'ai-shorts',
+        resource_type: 'image',
+      });
+      if (mUpload) modelUrl = mUpload.secure_url;
+    }
+  } catch (err: any) {
+    logger.error(`Cloudinary upload failed: ${err.message}`);
+    // If Cloudinary fails, we can't show images in frontend, but AI generation might still work if we pass local paths.
+    // However, it's better to fail early if storage fails.
+    throw new Error(`Failed to upload images to storage: ${err.message}`);
+  }
+
+  // 4. AI Generation
   try {
     logger.info("Calling generateImageWithAI...");
+    // Passing local files or URLs to AI service
     const generatedImageUrl = await generateImageWithAI(
-      productImage,
+      productImage, // We pass the original (local file) to AI so it doesn't have to download it from Cloudinary
       modelImage,
       {
         aspectRatio: body.aspectRatio,
@@ -93,14 +124,14 @@ export async function createProjectService(req: Request) {
     );
     logger.info(`Generation Success: ${generatedImageUrl}`);
 
-    // 4. Create Project and Deduct Credits
+    // 5. Create Project and Deduct Credits
     const project = await prisma.project.create({
       data: {
         projectName: body.projectName || 'Untitled Project',
         productName: body.productName || 'Unnamed Product',
         productDescription: body.productDescription || '',
-        productImage: typeof productImage === 'string' ? productImage : productImage.path,
-        modelImage: typeof modelImage === 'string' ? modelImage : modelImage.path,
+        productImage: productUrl || (typeof productImage === 'string' ? productImage : productImage.path),
+        modelImage: modelUrl || (typeof modelImage === 'string' ? modelImage : modelImage.path),
         generatedImage: generatedImageUrl,
         generatedVideo: '',
         userId: user.id,
@@ -168,4 +199,28 @@ export async function generateVideoService(req: Request) {
     logger.error('Video generation failed:', error);
     throw new Error(`Video generation failed: ${error.message}`);
   }
+}
+
+export async function getProjectsService(userId: string) {
+  return prisma.project.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+    select: {
+      id: true,
+      projectName: true,
+      productName: true,
+      generatedImage: true,
+      generatedVideo: true,
+      createdAt: true,
+      aspectRatio: true,
+    },
+  });
+}
+
+export async function getProjectByIdService(projectId: string, userId: string) {
+  const project = await prisma.project.findUnique({
+    where: { id: projectId, userId },
+  });
+  if (!project) throw new Error('Project not found');
+  return project;
 }

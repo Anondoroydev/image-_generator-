@@ -14,7 +14,10 @@ dns.setDefaultResultOrder('ipv4first');
 
 const app = e();
 
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://localhost:5000'],
+  credentials: true,
+}));
 app.use(helmet());
 app.use(cookie());
 app.use(e.json({ limit: '50mb' }));

@@ -2,6 +2,8 @@ import e from 'express';
 import {
   createProject,
   generateVideo,
+  getProjectById,
+  getProjects,
 } from '../controllers/project.controller.ts';
 import { authenticate } from '../middleware/auth.middleware.ts';
 import { upload } from '../middleware/uploadMiddleware.ts';
@@ -17,5 +19,7 @@ router.route('/projects').post(
   createProject,
 );
 router.post('/generate-video', authenticate, generateVideo);
+router.get('/projects', authenticate, getProjects);
+router.get('/projects/:id', authenticate, getProjectById);
 
 export const projectRouter = router;
