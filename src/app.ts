@@ -18,7 +18,8 @@ app.use(cors({
   origin: ['http://localhost:5173', 'http://localhost:5000'],
   credentials: true,
 }));
-app.use(helmet());
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+app.use((helmet as any)());
 app.use(cookie());
 app.use(e.json({ limit: '50mb' }));
 app.use(e.urlencoded({ limit: '50mb', extended: true }));
