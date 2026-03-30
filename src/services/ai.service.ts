@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { mkdirSync } from 'node:fs';
 import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -38,9 +39,10 @@ const isHuggingFaceEnabled = Boolean(config.HUGGINGFACE_API_KEY);
 const isGoogleGeminiEnabled = Boolean(config.GOOGLE_GEMINI_API_KEY && ai);
 
 const generateHuggingFaceImage = async (promptText: string) => {
-  const model = config.HUGGINGFACE_IMAGE_MODEL ?? 'black-forest-labs/FLUX.1-schnell';
+  const model =
+    config.HUGGINGFACE_IMAGE_MODEL ?? 'black-forest-labs/FLUX.1-schnell';
   const url = `https://router.huggingface.co/hf-inference/models/${model}`;
-  
+
   try {
     console.log(`[HF] Requesting image generation from ${model}...`);
     logger.info(`[HF] Prompt: ${promptText.substring(0, 100)}...`);
@@ -54,17 +56,18 @@ const generateHuggingFaceImage = async (promptText: string) => {
       {
         responseType: 'arraybuffer',
         headers: {
-          'Authorization': `Bearer ${config.HUGGINGFACE_API_KEY}`,
+          Authorization: `Bearer ${config.HUGGINGFACE_API_KEY}`,
           'Content-Type': 'application/json',
-          'Accept': 'image/png',
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          Accept: 'image/png',
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         },
-      }
+      },
     );
 
     const buffer = Buffer.from(response.data);
     const contentType = response.headers['content-type'] ?? 'image/png';
-    
+
     if (contentType.includes('application/json')) {
       const errorMsg = buffer.toString('utf8');
       throw new Error(`Hugging Face API Error: ${errorMsg}`);
@@ -125,24 +128,48 @@ export async function generateImageWithAI(
   modelImage: Express.Multer.File | string,
   body: GenerateImageInput,
 ) {
-  const productInfo = `${body.productName || ''} ${body.productDescription || ''}`.trim();
-  let placement = "";
-  if (productInfo.toLowerCase().includes("watch")) placement = " worn on the model's wrist";
-  else if (productInfo.toLowerCase().includes("bag") || productInfo.toLowerCase().includes("purse")) placement = " held by the model";
-  else if (productInfo.toLowerCase().includes("necklace") || productInfo.toLowerCase().includes("earring")) placement = " worn by the model";
-  else if (productInfo.toLowerCase().includes("shirt") || productInfo.toLowerCase().includes("dress") || productInfo.toLowerCase().includes("jacket")) placement = " worn by the model";
+  const productInfo =
+    `${body.productName || ''} ${body.productDescription || ''}`.trim();
+  let placement = '';
+  if (productInfo.toLowerCase().includes('watch'))
+    placement = " worn on the model's wrist";
+  else if (
+    productInfo.toLowerCase().includes('bag') ||
+    productInfo.toLowerCase().includes('purse')
+  )
+    placement = ' held by the model';
+  else if (
+    productInfo.toLowerCase().includes('necklace') ||
+    productInfo.toLowerCase().includes('earring')
+  )
+    placement = ' worn by the model';
+  else if (
+    productInfo.toLowerCase().includes('shirt') ||
+    productInfo.toLowerCase().includes('dress') ||
+    productInfo.toLowerCase().includes('jacket')
+  )
+    placement = ' worn by the model';
 
-  let finalPrompt = body.userPrompt || (productInfo ? `Professional e-commerce photography of ${productInfo}${placement}, high quality, realistic` : "High quality e-commerce product photography");
+  let finalPrompt =
+    body.userPrompt ||
+    (productInfo
+      ? `Professional e-commerce photography of ${productInfo}${placement}, high quality, realistic`
+      : 'High quality e-commerce product photography');
 
   // 1. Stage 1: Vision-based Prompt Engineering via Gemini (Using @google/genai v1 SDK)
   if (isGoogleGeminiEnabled && ai) {
     try {
-      logger.info("Stage 1: Using Gemini to analyze images and generate a rich prompt...");
-      
+      logger.info(
+        'Stage 1: Using Gemini to analyze images and generate a rich prompt...',
+      );
+
       const getImagePart = async (input: Express.Multer.File | string) => {
         if (typeof input === 'string') {
           if (input.startsWith('http')) {
-            const response = await axiosInstance.get(input, { responseType: 'arraybuffer', timeout: 30000 });
+            const response = await axiosInstance.get(input, {
+              responseType: 'arraybuffer',
+              timeout: 30000,
+            });
             return {
               inlineData: {
                 mimeType: response.headers['content-type'] || 'image/png',
@@ -158,7 +185,7 @@ export async function generateImageWithAI(
           };
         }
         const b64 = convertImageToBase64(input.path, input.mimetype);
-        return (b64 as any);
+        return b64 as any;
       };
 
       const productPart = await getImagePart(productImage);
@@ -186,9 +213,9 @@ export async function generateImageWithAI(
           {
             role: 'user',
             parts: [
-              { text: "Here is the Product image:" },
+              { text: 'Here is the Product image:' },
               productPart,
-              { text: "Here is the Model image:" },
+              { text: 'Here is the Model image:' },
               modelPart,
               { text: visionPrompt },
             ],
@@ -196,51 +223,84 @@ export async function generateImageWithAI(
         ],
         config: {
           safetySettings: [
-            { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_ONLY_HIGH' },
-            { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_ONLY_HIGH' },
-            { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_ONLY_HIGH' },
-            { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_ONLY_HIGH' },
+            {
+              category: 'HARM_CATEGORY_HATE_SPEECH',
+              threshold: 'BLOCK_ONLY_HIGH',
+            },
+            {
+              category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+              threshold: 'BLOCK_ONLY_HIGH',
+            },
+            {
+              category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+              threshold: 'BLOCK_ONLY_HIGH',
+            },
+            {
+              category: 'HARM_CATEGORY_HARASSMENT',
+              threshold: 'BLOCK_ONLY_HIGH',
+            },
           ],
           generationConfig: {
             temperature: 0.7,
             topP: 0.95,
-          }
-        }
+          },
+        },
       });
-      
+
       // Robust text extraction for different SDK versions
       const text = result.response?.text?.() || result.text;
-      
+
       if (text && text.trim().length > 10) {
         finalPrompt = text.trim();
-        console.log(`[STAGE 1] Vision analysis successful. Rich prompt generated.`);
-        logger.info(`Stage 1 Success: Generated rich prompt: ${finalPrompt.substring(0, 50)}...`);
+        console.log(
+          `[STAGE 1] Vision analysis successful. Rich prompt generated.`,
+        );
+        logger.info(
+          `Stage 1 Success: Generated rich prompt: ${finalPrompt.substring(0, 50)}...`,
+        );
       } else {
-        console.log(`[STAGE 1] Vision analysis returned no text. Using fallback.`);
+        console.log(
+          `[STAGE 1] Vision analysis returned no text. Using fallback.`,
+        );
       }
     } catch (error: any) {
-      const quotaExceeded = error.message?.includes('quota') || error.message?.includes('429') || error.message?.includes('RESOURCE_EXHAUSTED');
+      const quotaExceeded =
+        error.message?.includes('quota') ||
+        error.message?.includes('429') ||
+        error.message?.includes('RESOURCE_EXHAUSTED');
       if (quotaExceeded) {
         console.log(`[STAGE 1] QUOTA EXCEEDED. Using fallback prompt.`);
-        logger.warn(`Stage 1 Gemini reached quota. Using fallback prompt from metadata: ${finalPrompt}`);
+        logger.warn(
+          `Stage 1 Gemini reached quota. Using fallback prompt from metadata: ${finalPrompt}`,
+        );
       } else {
         console.log(`[STAGE 1] FAILED: ${error.message}`);
-        logger.warn(`Stage 1 (Gemini Vision) failed, using fallback: ${error.message || inspect(error)}`);
+        logger.warn(
+          `Stage 1 (Gemini Vision) failed, using fallback: ${error.message || inspect(error)}`,
+        );
       }
     }
   }
 
   // 2. Stage 2: Generation via Hugging Face (FLUX)
-  console.log(`[STAGE 2] Final prompt being sent to Hugging Face: "${finalPrompt}"`);
-  
+  console.log(
+    `[STAGE 2] Final prompt being sent to Hugging Face: "${finalPrompt}"`,
+  );
+
   let base64Image: string | undefined;
   if (isHuggingFaceEnabled) {
     try {
-      logger.info("Stage 2: Sending rich prompt to Hugging Face for image generation...");
+      logger.info(
+        'Stage 2: Sending rich prompt to Hugging Face for image generation...',
+      );
       base64Image = await generateHuggingFaceImage(finalPrompt);
     } catch (error: any) {
-      logger.error(`Stage 2 (Hugging Face) failed: ${error.message || inspect(error)}`);
-      throw new Error(`AI generation failed. HF Error: ${error.message || 'Unknown network error'}`);
+      logger.error(
+        `Stage 2 (Hugging Face) failed: ${error.message || inspect(error)}`,
+      );
+      throw new Error(
+        `AI generation failed. HF Error: ${error.message || 'Unknown network error'}`,
+      );
     }
   }
 
@@ -256,16 +316,25 @@ export async function generateImageWithAI(
   return upload.secure_url;
 }
 
-export async function generateVideoWithAi(project: Project & { user: { name: string } }) {
+export async function generateVideoWithAi(
+  project: Project & { user: { name: string } },
+) {
   const prompt = `Make the person showcase the product which is ${project.productName} ${project.productDescription}`;
   if (isHuggingFaceEnabled) {
     try {
       return await generateHuggingFaceVideo(prompt);
     } catch (error) {
-      logger.error('Hugging Face video generation failed:', JSON.stringify(error, null, 2));
-      throw new Error('Video generation failed. Your credits have been refunded.');
+      logger.error(
+        'Hugging Face video generation failed:',
+        JSON.stringify(error, null, 2),
+      );
+      throw new Error(
+        'Video generation failed. Your credits have been refunded.',
+      );
     }
   }
 
-  throw new Error("Video generation is currently unsupported in this configuration.");
+  throw new Error(
+    'Video generation is currently unsupported in this configuration.',
+  );
 }
