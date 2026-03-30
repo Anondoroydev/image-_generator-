@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String    @id @default(uuid())
+  googleId  String    @unique
+  name      String
+  email     String    @unique
+  picture   String?
+  loginType loginType @default(google)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  credits   Int       @default(20)
+  projects  Project[]
+  sessions  Session[]
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  userId       String
+  refreshToken String
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model Project {
+  id                 String   @id @default(uuid())
+  projectName        String
+  productName        String
+  productDescription String?
+  userPrompt         String?
+  productImage       String
+  modelImage         String
+  generatedImage     String
+  generatedVideo     String
+  isPublic           Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  userId             String
+  aspectRatio        String   @default("9:16")
+  user               User     @relation(fields: [userId], references: [id])
+}
+
+enum loginType {
+  google
+  github
+  email
+}

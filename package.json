@@ -1,0 +1,97 @@
+{
+  "name": "ai-short",
+  "version": "1.0.0",
+  "description": "AI-powered backend service",
+  "main": "dist/server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+
+    "build": "tsc",
+    "start": "node dist/server.js",
+
+    "format:check": "prettier . --check",
+    "format:fix": "prettier . --write",
+
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+
+    "prepare": "husky install",
+
+    "p:generate": "prisma generate",
+    "p:migrate": "prisma migrate dev --name init",
+    "p:deploy": "prisma migrate deploy",
+    "p:studio": "prisma studio",
+
+    "clean": "rm -rf dist"
+  },
+  "lint-staged": {
+    "*.{js,ts}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml}": [
+      "prettier --write"
+    ]
+  },
+  "keywords": ["node", "typescript", "express", "ai"],
+  "author": "",
+  "license": "ISC", 
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^25.0.10",
+    "@types/pg": "^8.16.0",
+
+    "eslint": "^9.39.2",
+    "globals": "^17.1.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+
+    "prettier": "3.8.1",
+
+    "prisma": "^7.3.0",
+
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.53.1"
+  },
+  "dependencies": {
+    "@google/genai": "^1.43.0",
+    "@prisma/adapter-pg": "^7.3.0",
+    "@prisma/client": "^7.3.0",
+
+    "@sentry/node": "^10.38.0",
+    "@sentry/profiling-node": "^10.36.0",
+
+    "axios": "^1.13.6",
+    "cloudinary": "^2.9.0",
+
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.3",
+
+    "express": "^5.2.1",
+    "googleapis": "^170.1.0",
+
+    "helmet": "^8.1.0",
+    "http-errors": "^2.0.1",
+
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.0.2",
+
+    "pg": "^8.17.2",
+
+    "winston": "^3.19.0",
+    "winston-sentry-log": "^1.0.26",
+
+    "zod": "^4.3.6"
+  }
+}
