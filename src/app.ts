@@ -11,7 +11,7 @@ app.use(
     origin: (origin, callback) => {
       // Allow requests with no origin (e.g. mobile apps, curl)
       if (!origin) return callback(null, true);
-      const allowed = ['http://localhost:5173', 'http://localhost:5000'];
+      const allowed = ['http://localhost:5173', ''];
       // Allow any vercel.app subdomain
       if (origin.endsWith('.vercel.app') || allowed.includes(origin)) {
         return callback(null, true);
